@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/', createFacultation);
 router.get('/', getFacultations);
-router.get('/', updateFacultation);
-router.get('/', deleteFacultation);
+router.put('/', updateFacultation);
+router.delete('/:id', deleteFacultation);
 
 export default router;

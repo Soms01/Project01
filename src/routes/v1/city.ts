@@ -4,9 +4,9 @@ import { createCity, updateCity, deleteCity, getCities  } from '../../controller
 const router = Router();
 
 router.post('/', createCity);
-router.get('/', updateCity);
+router.put('/:id', updateCity);
 router.get('/', getCities);
-router.get('/', deleteCity);
+router.delete('/:id', deleteCity);
 
 
 export default router;

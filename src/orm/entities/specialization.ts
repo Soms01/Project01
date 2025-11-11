@@ -11,6 +11,8 @@ export class specialition {
   name: string;
   @Column({ name: 'Code', type:'smallint'})
   code: number;
+  @Column({name:'fac', type:'bigint'})
+    fcid: number;
 
   @ManyToOne(() => facultation, (fc) => fc.specialition, {
     onDelete: 'CASCADE',

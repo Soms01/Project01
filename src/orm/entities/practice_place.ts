@@ -16,6 +16,8 @@ export class practice_place {
     name: string;
     @Column({ name: 'Popularity', type: 'smallint'})
     popularity: number;
+    @Column({name:'cityid', type:'bigint'})
+    cityid: number;
     @ManyToOne(() => city, (c) => c.practice_place, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   city: city;
   @OneToMany(() => practice_place_manager, (ppm) => ppm.practice_place)

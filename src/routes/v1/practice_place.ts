@@ -6,8 +6,8 @@ const router = Router();
 router.post('/', createPracticePlace);
 router.get('/', getPracticePlaces);
 router.get('/:id', getPracticePlaceById);
-router.get('/', updatePracticePlace);
-router.get('/', deletePracticePlace);
+router.put('/', updatePracticePlace);
+router.delete('/:id', deletePracticePlace);
 
 
 export default router;

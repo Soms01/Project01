@@ -12,6 +12,8 @@ export class student {
   id: number;
   @Column({ name: 'Fullname', type:'varchar' })
   fullname: string;
+  @Column({name:'spec', type:'bigint'})
+    spid: number;
 
 
   @ManyToOne(() => specialition, (sp) => sp.student, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

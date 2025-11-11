@@ -7,7 +7,7 @@ const router = Router();
 router.post('/', createApplication);
 router.get('/', getApplications);
 router.get('/:id', getApplicationById);
-router.get('/', updateApplicationStatus);
+router.delete('/:id', updateApplicationStatus);
 
 
 export default router;
