@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { specialition } from './specialition';
+import { specialition } from './specialization';
 import { university_manager } from './university_manager';
 
 @Entity({ name: 'facultation' })

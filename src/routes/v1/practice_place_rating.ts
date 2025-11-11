@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createRating, getRatings  } from '../../controllers/practica_rating.controller';
+import { createRating, getRatings  } from '../../controllers/practice_place_rating.controller';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPractiManager, getPractiManagers  } from '../../controllers/practica_manager.controller';
+import { createPractiManager, getPractiManagers  } from '../../controllers/practice_place_manager.controller';
 
 const router = Router();
 

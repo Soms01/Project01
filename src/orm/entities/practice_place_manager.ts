@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column,ManyToOne, OneToMany } from 'typeorm';
 
 import { practice_place } from './practice_place';
-import { application } from './application';
+import { application } from './Aplication';
 
 
 @Entity({ name: 'practice_place_manager' })
