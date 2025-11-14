@@ -20,14 +20,14 @@ export class application {
     report: string;
   @Column({type:'varchar', name:'type practice'})
     type_practice: string;
-    @Column({name:'placeid', type:'bigint'})
-    ppid: number;
+    @Column({name:'practicePlaceId', type:'bigint'})
+    practicePlaceId: number;
     @Column({name:'studentid', type:'bigint'})
     studentid: number;
-    @Column({name:'practiceManagerId', type:'bigint'})
-    ppmid: number;
+    @Column({name:'practicePlaceManagerId', type:'bigint'})
+    practicePlaceManagerId: number;
     @Column({name:'universityManagerId', type:'bigint'})
-    umid: number;
+    universityManagerId: number;
 
 
     @ManyToOne(() => practice_place_manager, (ppm) => ppm.application, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

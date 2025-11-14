@@ -10,8 +10,8 @@ export class practice_place_manager {
   id: number;
   @Column({ name: 'Fullname', type:'varchar'})
   fullname: string;
-  @Column({name:'placeid', type:'bigint'})
-    ppid: number;
+  @Column({name:'practicePlaceId', type:'bigint'})
+    practicePlaceId: number;
   @ManyToOne(() => practice_place, (pp) => pp.practice_place_manager, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     practice_place: practice_place;
   @OneToMany(() => application, (ap) => ap.practice_place_manager)

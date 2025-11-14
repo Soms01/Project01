@@ -11,8 +11,8 @@ export class university_manager {
   id: number;
   @Column({ name: 'Fullname', type:'varchar' })
   fullname: string;
-  @Column({name:'fac', type:'bigint'})
-    fcid: number;
+  @Column({name:'facultationId', type:'bigint'})
+    facultationId: number;
 
 
   @ManyToOne(() => facultation, (fc) => fc.university_manager, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

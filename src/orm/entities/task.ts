@@ -13,7 +13,7 @@ export class task {
    @Column({ type:'smallint',name: 'rating' })
   rating: number;
   @Column({name:'applicationId', type:'bigint'})
-    appid: number;
+    applicationId: number;
 
 
   @ManyToOne(() => application, (ap) => ap.task, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })

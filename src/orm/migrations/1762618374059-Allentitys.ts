@@ -40,6 +40,7 @@ export class Allentitys1762618374059 implements MigrationInterface {
             CREATE TABLE "practice_place_rating" (
                 "Id" BIGSERIAL NOT NULL,
                 "rating" smallint NOT NULL,
+                "studentId" bigint,
                 CONSTRAINT "PK_19c508ca88c3cfdf2deb05e0af7" PRIMARY KEY ("Id")
             )
         `);
@@ -47,6 +48,7 @@ export class Allentitys1762618374059 implements MigrationInterface {
             CREATE TABLE "practice_place_manager" (
                 "Id" BIGSERIAL NOT NULL,
                 "Fullname" character varying NOT NULL,
+                "studentId" bigint,
                 "practicePlaceId" bigint,
                 CONSTRAINT "PK_30a5ff8ce6814b7e49a46cb142b" PRIMARY KEY ("Id")
             )
