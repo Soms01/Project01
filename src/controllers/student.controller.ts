@@ -29,6 +29,6 @@ export const createStudent = async (req: Request, res: Response) => {
 
 // Отримати всіх студентів
 export const getStudents = async (req: Request, res: Response) => {
-  const students = await studentRepo().find({ relations: ['specialition_id'] });
+  const students = await studentRepo().find({ relations: ['specialition'] });
   return res.json(students);
 };

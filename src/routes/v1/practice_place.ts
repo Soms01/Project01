@@ -6,7 +6,7 @@ const router = Router();
 router.post('/', createPracticePlace);
 router.get('/', getPracticePlaces);
 router.get('/:id', getPracticePlaceById);
-router.put('/', updatePracticePlace);
+router.put('/:id', updatePracticePlace);
 router.delete('/:id', deletePracticePlace);
 
 

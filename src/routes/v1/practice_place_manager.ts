@@ -3,8 +3,8 @@ import { createPractiManager, getPractiManagers  } from '../../controllers/pract
 
 const router = Router();
 
-router.post('/', getPractiManagers);
-router.get('/', createPractiManager);
+router.get('/', getPractiManagers);
+router.post('/', createPractiManager);
 
 
 export default router;

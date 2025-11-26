@@ -21,7 +21,7 @@ export const createPracticePlace = async (req: Request, res: Response) => {
       name,
       description,
       popularity,
-      city: {id:cityId},
+      cityId,
     });
 
     const saved = await placeRepo().save(newPlace);
@@ -33,14 +33,14 @@ export const createPracticePlace = async (req: Request, res: Response) => {
 
 // Отримати всі місця практики з містом
 export const getPracticePlaces = async (req: Request, res: Response) => {
-  const places = await placeRepo().find({ relations: ['city_id'] });
+  const places = await placeRepo().find({ relations: ['city'] });
   return res.json(places);
 };
 
 // Отримати місце за ID
 export const getPracticePlaceById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const place = await placeRepo().findOne(id, { relations: ['city_id'] });
+  const place = await placeRepo().findOne(id, { relations: ['city'] });
   if (!place) return res.status(404).json({ message: 'Місце не знайдено' });
   return res.json(place);
 };

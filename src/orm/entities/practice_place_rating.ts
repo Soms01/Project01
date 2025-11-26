@@ -11,10 +11,10 @@ export class practice_place_rating {
     rating: bigint;
     @Column({name:'practicePlaceId', type:'bigint'})
     practicePlaceId: number;
-    @Column({name:'studentid', type:'bigint'})
-    studentid: number;
-    @ManyToMany(() => practice_place, (pp) => pp.practice_place_rating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-        practice_place: practice_place;
-        @ManyToMany(() => student, (st) => st.practice_place_rating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @Column({name:'studentId', type:'bigint'})
+    studentId: number;
+    @ManyToMany(() => practice_place, (pp) => pp.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+        practicePlace: practice_place;
+        @ManyToMany(() => student, (st) => st.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
         student: student;
 }

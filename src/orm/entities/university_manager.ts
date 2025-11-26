@@ -17,6 +17,6 @@ export class university_manager {
 
   @ManyToOne(() => facultation, (fc) => fc.university_manager, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     facultation: facultation;
-    @OneToMany(() => application, (ap) => ap.university_manager)
+    @OneToMany(() => application, (ap) => ap.universityManager)
   application: application[];
 }

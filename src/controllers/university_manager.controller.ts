@@ -21,6 +21,6 @@ export const createUniveManager = async (req: Request, res: Response) => {
 };
 
 export const getUniveManagers = async (req: Request, res: Response) => {
-  const list = await umRepo().find({ relations: ['facultation_id'] });
+  const list = await umRepo().find({ relations: ['facultation'] });
   return res.json(list);
 };

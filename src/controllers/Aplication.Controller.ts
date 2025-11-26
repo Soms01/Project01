@@ -42,9 +42,9 @@ export const createApplication = async (req: Request, res: Response) => {
       type_practice: typePractice,
       report,
       student,
-      practice_place: place,
-      practice_place_manager: pm,
-      university_manager: um,
+      practiceplace: place,
+      practiceplacemanager: pm,
+      universitymanager: um,
     });
 
     const saved = await appRepo().save(newApp);
@@ -57,7 +57,7 @@ export const createApplication = async (req: Request, res: Response) => {
 // Отримати всі заявки (з пов’язаними даними)
 export const getApplications = async (req: Request, res: Response) => {
   const apps = await appRepo().find({
-    relations: ['student_id', 'practice_place_id', 'practice_manager_id', 'universit_manager_id'],
+    relations: ['student', 'practiceplace', 'practicemanager', 'universitymanager'],
   });
   return res.json(apps);
 };
@@ -66,7 +66,7 @@ export const getApplications = async (req: Request, res: Response) => {
 export const getApplicationById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const app = await appRepo().findOne(id, {
-    relations: ['student_id', 'practice_place_id', 'practice_manager_id', 'universit_manager_id'],
+    relations: ['student', 'practiceplace', 'practicemanager', 'universitymanager'],
   });
   if (!app) return res.status(404).json({ message: 'Заявку не знайдено' });
   return res.json(app);

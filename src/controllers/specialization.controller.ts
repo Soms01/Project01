@@ -21,6 +21,6 @@ export const createSpecialition = async (req: Request, res: Response) => {
 };
 
 export const getSpecialitions = async (req: Request, res: Response) => {
-  const specs = await specRepo().find({ relations: ['facultation_id'] });
+  const specs = await specRepo().find({ relations: ['facultation'] });
   return res.json(specs);
 };

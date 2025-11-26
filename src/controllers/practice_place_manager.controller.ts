@@ -8,11 +8,14 @@ const placeRepo = () => getRepository(practice_place);
 
 export const createPractiManager = async (req: Request, res: Response) => {
   try {
-    const { fullName, placeId } = req.body;
-    const place = await placeRepo().findOne(placeId);
+    const { fullName, practicePlaceId } = req.body;
+    const place = await placeRepo().findOne(practicePlaceId);
     if (!place) return res.status(404).json({ message: 'Місце практики не знайдено' });
 
-    const pm = pmRepo().create({ fullname: fullName, practice_place: place });
+    const pm = pmRepo().create({ 
+      fullName, 
+      practicePlaceId,
+    });
     const saved = await pmRepo().save(pm);
     return res.status(201).json(saved);
   } catch (error) {
@@ -21,6 +24,14 @@ export const createPractiManager = async (req: Request, res: Response) => {
 };
 
 export const getPractiManagers = async (req: Request, res: Response) => {
-  const list = await pmRepo().find({ relations: ['practice_place_id'] });
-  return res.json(list);
+  try {
+    const list = await pmRepo().find({
+      relations: ['practicePlace'] // <-- назва властивості ManyToOne у Entity
+    });
+
+    return res.json(list);
+  } catch (error) {
+    return res.status(500).json({ message: "Помилка отримання списку КПМП", error });
+  }
 };
+

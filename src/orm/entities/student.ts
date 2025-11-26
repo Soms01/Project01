@@ -19,7 +19,7 @@ export class student {
   @ManyToOne(() => specialition, (sp) => sp.student, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
       specialition: specialition;
   @OneToMany(() =>practice_place_rating, (ppr) => ppr.student)
-    practice_place_rating: practice_place_rating[];
+    practiceplacerating: practice_place_rating[];
   @OneToMany(() =>application, (ap) => ap.student)
     application: application[];
 

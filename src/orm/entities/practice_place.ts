@@ -16,14 +16,14 @@ export class practice_place {
     name: string;
     @Column({ name: 'Popularity', type: 'smallint'})
     popularity: number;
-    @Column({name:'cityid', type:'bigint'})
-    cityid: number;
+    @Column({name:'cityId', type:'bigint'})
+    cityId: number;
     @ManyToOne(() => city, (c) => c.practice_place, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   city: city;
-  @OneToMany(() => practice_place_manager, (ppm) => ppm.practice_place)
-  practice_place_manager: practice_place_manager[];
-  @OneToMany(() => practice_place_rating, (ppr) => ppr.practice_place)
-  practice_place_rating: practice_place_rating[];
-  @OneToMany(() => application, (ap) => ap.practice_place)
+  @OneToMany(() => practice_place_manager, (ppm) => ppm.practicePlace)
+  practiceplacemanager: practice_place_manager[];
+  @OneToMany(() => practice_place_rating, (ppr) => ppr.practicePlace)
+  practiceplacerating: practice_place_rating[];
+  @OneToMany(() => application, (ap) => ap.practicePlace)
   application: application[];
 }

@@ -24,7 +24,7 @@ export const getTasksByApplication = async (req: Request, res: Response) => {
   const { appId } = req.params;
   const tasks = await taskRepo().find({
     where: { application_id: Number(appId) },
-    relations: ['application_id'],
+    relations: ['application'],
   });
   return res.json(tasks);
 };
