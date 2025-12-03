@@ -1,34 +1,52 @@
-// src/controllers/student.controller.ts
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { student } from '../orm/entities/student';
-import { specialition } from '../orm/entities/specialization';
 
-const studentRepo = () => getRepository(student);
-const specRepo = () => getRepository(specialition);
+import { Request, Response, NextFunction } from 'express';
+import { studentservices } from '../services/studentservices';
 
-// Додати студента
-export const createStudent = async (req: Request, res: Response) => {
-  try {
-    const { fullName, specId } = req.body;
+const studentService = new studentservices
 
-    const spec = await specRepo().findOne(specId);
-    if (!spec) return res.status(404).json({ message: 'Спеціальність не знайдена' });
-
-    const student = studentRepo().create({
-      fullname: fullName,
-      specialition: spec,
-    });
-
-    const saved = await studentRepo().save(student);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні студента', error });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await studentService.getAllStudents();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-};
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await studentService.getStudentById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await studentService.createStudent(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
 
-// Отримати всіх студентів
-export const getStudents = async (req: Request, res: Response) => {
-  const students = await studentRepo().find({ relations: ['specialition'] });
-  return res.json(students);
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await studentService.updateStudent(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await studentService.deleteStudent(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

@@ -1,39 +1,52 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { facultation } from '../orm/entities/facultation';
 
-const facRepo = () => getRepository(facultation);
+import { Request, Response, NextFunction } from 'express';
+import { facultationservices } from '../services/facultationservices';
 
-export const createFacultation = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-    const fac = facRepo().create({ name });
-    const saved = await facRepo().save(fac);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні факультету', error });
+const facService = new facultationservices
+
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await facService.getAllFacultations();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-};
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await facService.getFacultationById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await facService.createFacultation(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
 
-export const getFacultations = async (req: Request, res: Response) => {
-  const list = await facRepo().find();
-  return res.json(list);
-};
-
-export const updateFacultation = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const fac = await facRepo().findOne(id);
-  if (!fac) return res.status(404).json({ message: 'Факультет не знайдено' });
-
-  fac.name = req.body.name ?? fac.name;
-  const saved = await facRepo().save(fac);
-  return res.json(saved);
-};
-
-export const deleteFacultation = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const fac = await facRepo().findOne(id);
-  if (!fac) return res.status(404).json({ message: 'Факультет не знайдено' });
-  await facRepo().remove(fac);
-  return res.json({ message: 'Факультет видалено' });
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await facService.updateFacultation(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await facService.deleteFacultation(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

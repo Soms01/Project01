@@ -1,72 +1,52 @@
-// src/controllers/practicePlace.controller.ts
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { practice_place } from '../orm/entities/practice_place';
-import { city } from '../orm/entities/city';
 
-const placeRepo = () => getRepository(practice_place);
-const cityRepo = () => getRepository(city);
+import { Request, Response, NextFunction } from 'express';
+import { placeservices } from '../services/placeservice';
 
-// Додати місце практики
-export const createPracticePlace = async (req: Request, res: Response) => {
-  try {
-    const { name, description, popularity, cityId } = req.body;
+const placeService = new placeservices
 
-    const city = await cityRepo().findOne(cityId);
-    if (!city) {
-      return res.status(404).json({ message: 'Місто не знайдено' });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await placeService.getAllPlaces();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await placeService.getPlaceById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await placeService.createPlace(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
     }
 
-    const newPlace = placeRepo().create({
-      name,
-      description,
-      popularity,
-      cityId,
-    });
-
-    const saved = await placeRepo().save(newPlace);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні місця практики', error });
   }
-};
-
-// Отримати всі місця практики з містом
-export const getPracticePlaces = async (req: Request, res: Response) => {
-  const places = await placeRepo().find({ relations: ['city'] });
-  return res.json(places);
-};
-
-// Отримати місце за ID
-export const getPracticePlaceById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const place = await placeRepo().findOne(id, { relations: ['city'] });
-  if (!place) return res.status(404).json({ message: 'Місце не знайдено' });
-  return res.json(place);
-};
-
-// Оновити місце
-export const updatePracticePlace = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name, description, popularity } = req.body;
-
-  const place = await placeRepo().findOne(id);
-  if (!place) return res.status(404).json({ message: 'Місце не знайдено' });
-
-  place.name = name ?? place.name;
-  place.description = description ?? place.description;
-  place.popularity = popularity ?? place.popularity;
-
-  const updated = await placeRepo().save(place);
-  return res.json(updated);
-};
-
-// Видалити місце
-export const deletePracticePlace = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const place = await placeRepo().findOne(id);
-  if (!place) return res.status(404).json({ message: 'Місце не знайдено' });
-
-  await placeRepo().remove(place);
-  return res.json({ message: 'Місце успішно видалено' });
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await placeService.updatePlace(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await placeService.deletePlace(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

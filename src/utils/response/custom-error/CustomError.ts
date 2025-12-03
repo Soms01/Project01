@@ -1,11 +1,11 @@
 import { ErrorType, ErrorValidation, ErrorResponse } from './types';
 
 export class CustomError extends Error {
-  private httpStatusCode: number;
-  private errorType: ErrorType;
-  private errors: string[] | null;
-  private errorRaw: any;
-  private errorsValidation: ErrorValidation[] | null;
+  public httpStatusCode: number;
+  public errorType: ErrorType;
+  public errors: string[] | null;
+  public errorRaw: any;
+  public errorsValidation: ErrorValidation[] | null;
 
   constructor(
     httpStatusCode: number,

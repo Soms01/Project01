@@ -1,26 +1,52 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { specialition } from '../orm/entities/specialization';
-import { facultation } from '../orm/entities/facultation';
 
-const specRepo = () => getRepository(specialition);
-const facRepo = () => getRepository(facultation);
+import { Request, Response, NextFunction } from 'express';
+import { specservices } from '../services/specservices';
 
-export const createSpecialition = async (req: Request, res: Response) => {
-  try {
-    const { name, code, facultationId } = req.body;
-    const fac = await facRepo().findOne(facultationId);
-    if (!fac) return res.status(404).json({ message: 'Факультет не знайдено' });
+const specService = new specservices
 
-    const spec = specRepo().create({ name, code, facultation: fac });
-    const saved = await specRepo().save(spec);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні спеціальності', error });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await specService.getAllSpecialitions();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-};
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await specService.getSpecialitionById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await specService.createSpecialition(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
 
-export const getSpecialitions = async (req: Request, res: Response) => {
-  const specs = await specRepo().find({ relations: ['facultation'] });
-  return res.json(specs);
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await specService.updateSpecialition(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await specService.deleteSpecialition(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

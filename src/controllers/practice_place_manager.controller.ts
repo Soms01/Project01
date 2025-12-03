@@ -1,37 +1,52 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { practice_place_manager } from '../orm/entities/practice_place_manager';
-import { practice_place } from '../orm/entities/practice_place';
 
-const pmRepo = () => getRepository(practice_place_manager);
-const placeRepo = () => getRepository(practice_place);
+import { Request, Response, NextFunction } from 'express';
+import { placeservices } from '../services/manager_placeservices';
 
-export const createPractiManager = async (req: Request, res: Response) => {
-  try {
-    const { fullName, practicePlaceId } = req.body;
-    const place = await placeRepo().findOne(practicePlaceId);
-    if (!place) return res.status(404).json({ message: 'Місце практики не знайдено' });
+const managerService = new placeservices
 
-    const pm = pmRepo().create({ 
-      fullName, 
-      practicePlaceId,
-    });
-    const saved = await pmRepo().save(pm);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні керівника практики (КПМП)', error });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await managerService.getAllPlace_managers();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.getPlace_managerById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await managerService.createPlace_manager(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
+
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.updatePlace_manager(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.deletePlace_manager(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
 };
-
-export const getPractiManagers = async (req: Request, res: Response) => {
-  try {
-    const list = await pmRepo().find({
-      relations: ['practicePlace'] // <-- назва властивості ManyToOne у Entity
-    });
-
-    return res.json(list);
-  } catch (error) {
-    return res.status(500).json({ message: "Помилка отримання списку КПМП", error });
-  }
-};
-

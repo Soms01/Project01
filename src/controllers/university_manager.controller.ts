@@ -1,26 +1,53 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { university_manager } from '../orm/entities/university_manager';
-import { facultation } from '../orm/entities/facultation';
 
-const umRepo = () => getRepository(university_manager);
-const facRepo = () => getRepository(facultation);
+import { Request, Response, NextFunction } from 'express';
+import { un_managerservices } from '../services/un_managerservices';
 
-export const createUniveManager = async (req: Request, res: Response) => {
-  try {
-    const { fullName, facultationId } = req.body;
-    const fac = await facRepo().findOne(facultationId);
-    if (!fac) return res.status(404).json({ message: 'Факультет не знайдено' });
+const managerService = new un_managerservices
 
-    const um = umRepo().create({ fullname: fullName, facultation: fac });
-    const saved = await umRepo().save(um);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні керівника практики (КПУ)', error });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await managerService.getAllUniversity_managers();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.getUniversity_managerById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await managerService.createUniversity_manager(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
+
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.updateUniversity_manager(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await managerService.deleteUniversity_manager(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
 };
 
-export const getUniveManagers = async (req: Request, res: Response) => {
-  const list = await umRepo().find({ relations: ['facultation'] });
-  return res.json(list);
-};

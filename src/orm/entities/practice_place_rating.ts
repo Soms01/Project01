@@ -8,7 +8,7 @@ export class practice_place_rating {
     @PrimaryGeneratedColumn({ name: 'Id', type: 'bigint' })
   id: number;
     @Column({type:'smallint', name:'rating'})
-    rating: bigint;
+    rating: number;
     @Column({name:'practicePlaceId', type:'bigint'})
     practicePlaceId: number;
     @Column({name:'studentId', type:'bigint'})

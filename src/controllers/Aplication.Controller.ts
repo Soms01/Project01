@@ -1,86 +1,52 @@
-// src/controllers/application.controller.ts
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { application } from '../orm/entities/Aplication';
-import { student } from '../orm/entities/student';
-import { practice_place } from '../orm/entities/practice_place';
-import { practice_place_manager } from '../orm/entities/practice_place_manager';
-import { university_manager } from '../orm/entities/university_manager';
 
-const appRepo = () => getRepository(application);
-const studentRepo = () => getRepository(student);
-const placeRepo = () => getRepository(practice_place);
-const pmRepo = () => getRepository(practice_place_manager);
-const umRepo = () => getRepository(university_manager);
+import { Request, Response, NextFunction } from 'express';
+import { applicationservices } from '../services/applicationservices';
 
-// Створити нову заявку
-export const createApplication = async (req: Request, res: Response) => {
-  try {
-    const {
-      dateFrom,
-      dateTo,
-      typePractice,
-      report,
-      studentId,
-      placeId,
-      practiceManagerId,
-      universityManagerId,
-    } = req.body;
+const applicationService = new applicationservices
 
-    const student = await studentRepo().findOne(studentId);
-    const place = await placeRepo().findOne(placeId);
-    const pm = await pmRepo().findOne(practiceManagerId);
-    const um = await umRepo().findOne(universityManagerId);
-
-    if (!student || !place || !pm || !um) {
-      return res.status(404).json({ message: 'Не знайдено одну з сутностей (студент, місце, керівники)' });
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await applicationService.getAllApplications();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await applicationService.getApplicationById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await applicationService.createApplication(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
     }
 
-    const newApp = appRepo().create({
-      dateFrom,
-      dateTo,
-      type_practice: typePractice,
-      report,
-      student,
-      practiceplace: place,
-      practiceplacemanager: pm,
-      universitymanager: um,
-    });
-
-    const saved = await appRepo().save(newApp);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні заявки', error });
   }
-};
-
-// Отримати всі заявки (з пов’язаними даними)
-export const getApplications = async (req: Request, res: Response) => {
-  const apps = await appRepo().find({
-    relations: ['student', 'practiceplace', 'practicemanager', 'universitymanager'],
-  });
-  return res.json(apps);
-};
-
-// Отримати заявку за ID
-export const getApplicationById = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const app = await appRepo().findOne(id, {
-    relations: ['student', 'practiceplace', 'practicemanager', 'universitymanager'],
-  });
-  if (!app) return res.status(404).json({ message: 'Заявку не знайдено' });
-  return res.json(app);
-};
-
-// Оновити статус заявки (узгоджена / відхилена)
-export const updateApplicationStatus = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { status } = req.body; // наприклад: "approved", "rejected", "pending"
-
-  const app = await appRepo().findOne(id);
-  if (!app) return res.status(404).json({ message: 'Заявку не знайдено' });
-
-  (app as any).status = status;
-  const updated = await appRepo().save(app);
-  return res.json(updated);
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await applicationService.updateApplication(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await applicationService.deleteApplication(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

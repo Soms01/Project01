@@ -1,41 +1,52 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { city } from '../orm/entities/city';
 
-const cityRepo = () => getRepository(city);
+import { Request, Response, NextFunction } from 'express';
+import { cityservices } from '../services/cityservices';
 
-export const createCity = async (req: Request, res: Response) => {
-  try {
-    const { name } = req.body;
-    const newcity = cityRepo().create({ name });
-    const saved = await cityRepo().save(newcity);
-    return res.status(201).json(saved);
-  } catch (error) {
-    return res.status(500).json({ message: 'Помилка при створенні міста', error });
+const cityService = new cityservices
+
+export class applicationController {
+  static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await cityService.getAllCities();
+       res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-};
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await cityService.getCityById(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await cityService.createCity(req.body);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
 
-export const getCities = async (req: Request, res: Response) => {
-  const cities = await cityRepo().find();
-  return res.json(cities);
-};
-
-export const updateCity = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const existingcity = await cityRepo().findOne(id);
-  if (!existingcity) return res.status(404).json({ message: 'Місто не знайдено' });
-
-  existingcity.name = req.body.name ?? existingcity.name;
-
-  const saved = await cityRepo().save(existingcity);
-  return res.json(saved);
-};
-
-export const deleteCity = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const existingcity = await cityRepo().findOne(id);
-  if (!existingcity){return res.status(404).json({ message: 'Місто не знайдено' });
-}
-  await cityRepo().remove(existingcity);
-  return res.json({ message: 'Місто видалено' });
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await cityService.updateCity(id, req.body);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+   static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+      const result = await cityService.deleteCity(id);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };
