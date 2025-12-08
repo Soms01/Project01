@@ -4,7 +4,7 @@ import { un_managerservices } from '../services/un_managerservices';
 
 const managerService = new un_managerservices
 
-export class applicationController {
+export class managerController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await managerService.getAllUniversity_managers();

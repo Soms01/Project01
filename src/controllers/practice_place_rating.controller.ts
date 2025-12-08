@@ -4,7 +4,7 @@ import { ratingservices } from '../services/place_ratingservices';
 
 const ratingService = new ratingservices
 
-export class applicationController {
+export class ratingController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await ratingService.getAllRatings();

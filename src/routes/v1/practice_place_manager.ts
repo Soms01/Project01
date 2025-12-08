@@ -1,10 +1,14 @@
 import { Router } from 'express';
-import { createPractiManager, getPractiManagers  } from '../../controllers/practice_place_manager.controller';
+import {  managerController } from '../../controllers/practice_place_manager.controller';
+import { validatorCreateManager_pp } from '../../middleware/validation/validatormanagers/validatorpp_manager';
 
 const router = Router();
 
-router.get('/', getPractiManagers);
-router.post('/', createPractiManager);
+router.get('/', managerController.getAll);
+router.post('/',[validatorCreateManager_pp], managerController.create);
+router.put('/:id', managerController.update);
+router.get('/:id', managerController.getById);
+router.delete('/:id', managerController.delete);
 
 
 export default router;

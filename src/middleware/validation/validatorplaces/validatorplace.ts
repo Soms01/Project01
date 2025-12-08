@@ -3,7 +3,7 @@ import validator from 'validator';
 
 import { CustomError } from '../../../utils/response/custom-error/CustomError';
 
-export const validatorCreateCity = async (req: Request, res: Response, next: NextFunction) => {
+export const validatorCreatePlace = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, description, popularity, cityId } = req.body;
 

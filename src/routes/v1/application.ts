@@ -1,13 +1,15 @@
 // src/routes/v1/tourOrder.routes.ts
 import { Router } from 'express';
-import { createApplication, getApplications, getApplicationById, updateApplicationStatus  } from '../../controllers/Aplication.Controller';
+import { applicationController  } from '../../controllers/Aplication.Controller';
+import { validatorCreateApplication } from '../../middleware/validation/validatorstudents/validatorapplication';
 
 const router = Router();
 
-router.post('/', createApplication);
-router.get('/', getApplications);
-router.get('/:id', getApplicationById);
-router.delete('/:id', updateApplicationStatus);
+router.post('/', [validatorCreateApplication], applicationController.create);
+router.get('/',  applicationController.getAll);
+router.get('/:id', applicationController.getById);
+router.patch('/:id', applicationController.update);
+router.delete('/:id', applicationController.delete);
 
 
 export default router;

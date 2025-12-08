@@ -1,11 +1,13 @@
 import { Router } from 'express';
-import { createFacultation, getFacultations, updateFacultation, deleteFacultation  } from '../../controllers/facultation.controller';
+import { facultationController  } from '../../controllers/facultation.controller';
+import { validatorCreateFacultation } from '../../middleware/validation/validatorspecs/validatorfacultation';
 
 const router = Router();
 
-router.post('/', createFacultation);
-router.get('/', getFacultations);
-router.put('/', updateFacultation);
-router.delete('/:id', deleteFacultation);
+router.post('/', [validatorCreateFacultation], facultationController.create);
+router.get('/', facultationController.getAll);
+router.get('/:id', facultationController.getById);
+router.put('/', facultationController.update);
+router.delete('/:id', facultationController.delete);
 
 export default router;

@@ -4,7 +4,7 @@ import { specservices } from '../services/specservices';
 
 const specService = new specservices
 
-export class applicationController {
+export class specialitionController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await specService.getAllSpecialitions();

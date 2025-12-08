@@ -4,7 +4,7 @@ import { placeservices } from '../services/placeservice';
 
 const placeService = new placeservices
 
-export class applicationController {
+export class placeController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await placeService.getAllPlaces();

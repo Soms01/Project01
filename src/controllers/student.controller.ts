@@ -4,7 +4,7 @@ import { studentservices } from '../services/studentservices';
 
 const studentService = new studentservices
 
-export class applicationController {
+export class studentController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await studentService.getAllStudents();

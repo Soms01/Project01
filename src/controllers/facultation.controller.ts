@@ -4,7 +4,7 @@ import { facultationservices } from '../services/facultationservices';
 
 const facService = new facultationservices
 
-export class applicationController {
+export class facultationController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await facService.getAllFacultations();

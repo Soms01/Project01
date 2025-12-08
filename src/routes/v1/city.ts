@@ -1,13 +1,14 @@
 import { Router } from 'express';
-import { createCity, updateCity, deleteCity, getCities  } from '../../controllers/city.controller';
+import { cityController  } from '../../controllers/city.controller';
+import { validatorCreateCity } from '../../middleware/validation/validatorplaces/validatorcity';
 
 const router = Router();
 
-router.post('/', createCity);
-router.put('/:id', updateCity);
-router.get('/:id', getCities);
-router.get('/', getCities);
-router.delete('/:id', deleteCity);
+router.post('/', [validatorCreateCity], cityController.create);
+router.put('/:id', cityController.update);
+router.get('/:id', cityController.getById);
+router.get('/', cityController.getAll);
+router.delete('/:id', cityController.delete);
 
 
 export default router;

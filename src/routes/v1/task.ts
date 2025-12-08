@@ -1,10 +1,16 @@
 import { Router } from 'express';
-import { createTask, getTasksByApplication } from 
-'../../controllers/tasks.controller';
+import { taskController } from '../../controllers/tasks.controller';
+import { validatorCreateTask } from '../../middleware/validation/validatormanagers/validatortask';
 
 const router = Router();
 
-router.post('/', createTask);
-router.get('/', getTasksByApplication);
+router.post('/',[validatorCreateTask], taskController.create);
+router.get('/', taskController.getAll);
+router.get('/:id', taskController.getById);
+router.put('/:id', taskController.update);
+router.delete('/:id', taskController.delete);
+
+
+
 
 export default router;

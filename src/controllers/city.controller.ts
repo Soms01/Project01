@@ -4,7 +4,7 @@ import { cityservices } from '../services/cityservices';
 
 const cityService = new cityservices
 
-export class applicationController {
+export class cityController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const result = await cityService.getAllCities();

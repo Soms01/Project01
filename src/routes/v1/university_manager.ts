@@ -1,9 +1,14 @@
 import { Router } from 'express';
-import { createUniveManager, getUniveManagers  } from '../../controllers/university_manager.controller';
+import { managerController  } from '../../controllers/university_manager.controller';
+import { validatorCreateManager_un } from '../../middleware/validation/validatormanagers/validatorun_manager';
+
 
 const router = Router();
 
-router.post('/', createUniveManager);
-router.get('/', getUniveManagers);
+router.post('/',[validatorCreateManager_un], managerController.create);
+router.get('/', managerController.getAll);
+router.get('/:id', managerController.getById);
+router.put('/:id', managerController.update);
+router.delete('/:id', managerController.delete);
 
 export default router;
