@@ -7,7 +7,7 @@ const router = Router();
 router.post('/',[validatorCreateSpecialition] ,specialitionController.create);
 router.get('/', specialitionController.getAll);
 router.get('/:id', specialitionController.getById);
-router.put('/:id', specialitionController.update);
+router.patch('/:id', specialitionController.update);
 router.delete('/:id', specialitionController.delete);
 
 

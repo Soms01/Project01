@@ -7,7 +7,7 @@ const router = Router();
 router.post('/', [validatorCreateFacultation], facultationController.create);
 router.get('/', facultationController.getAll);
 router.get('/:id', facultationController.getById);
-router.put('/', facultationController.update);
+router.put('/:id', facultationController.update);
 router.delete('/:id', facultationController.delete);
 
 export default router;

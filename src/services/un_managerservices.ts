@@ -3,57 +3,89 @@ import { un_managerDto } from '../DTO/un_managerDto';
 import { university_manager } from '../orm/entities/university_manager';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class un_managerservices {
+export class un_managerservices { // Краще: UniversityManagerServices
 
     private unRepository = getRepository(university_manager);
 
+    // 👇 ВАЖЛИВО: Перевір у файлі 'orm/entities/university_manager.ts'.
+    // Скоріш за все, менеджер прив'язаний до факультету.
+    // Якщо поле називається 'facultation', залишай як є. 
+    // Якщо 'faculty', зміни на 'faculty'.
+    private relations = ['facultation']; 
+
     async getAllUniversity_managers() {
-        const unmanagers = await this.unRepository.find();
+        const unmanagers = await this.unRepository.find({
+            relations: this.relations // ✅ Завантажуємо зв'язки
+        });
         return unmanagers.map((um) => new un_managerDto(um));
-        }
-    
-        async getUniversity_managerById(id: number) {
+    }
+
+    async getUniversity_managerById(id: number) {
         if (isNaN(id)) {
-          throw new CustomError(400, 'Validation', 'invalid ID manager');
+            throw new CustomError(400, 'Validation', 'invalid ID manager');
         }
-        const un_manager = await this.unRepository.findOne({ where: { id } });
+        const un_manager = await this.unRepository.findOne({ 
+            where: { id },
+            relations: this.relations // ✅ Завантажуємо зв'язки
+        });
+
         if (!un_manager) {
-          throw new CustomError(404, 'General', 'manager not found');
-        }
-    
-        return new un_managerDto(un_manager);
-        }
-    
-        async createUniversity_manager(data: Partial<university_manager>){
-            const un_manager = this.unRepository.create(data);
-            const created = await this.unRepository.save(un_manager);
-            return new un_managerDto(created);
-    
-        }
-        async updateUniversity_manager(id: number, data: Partial<university_manager>) {
-            if (isNaN(id)) {
-            throw new CustomError(400, 'Validation', 'invalid ID manager');
-        }
-            const manager = await this.unRepository.findOne({ where: { id } });
-            if (!manager) {
-            throw new CustomError(404, 'General', 'manager not found ');
-        }
-            
-            Object.assign(manager, data);
-            const updated = await this.unRepository.save(manager);
-            return new un_managerDto(updated);
-        }
-            
-            async deleteUniversity_manager(id: number) {
-            if (isNaN(id)) {
-            throw new CustomError(400, 'Validation', 'invalid ID manager');
-        }
-            
-            const result = await this.unRepository.delete(id);
-            if (!result.affected) {
             throw new CustomError(404, 'General', 'manager not found');
         }
-            
-            return { message: `manager with ID ${id} correctly deleted` };
+
+        return new un_managerDto(un_manager);
+    }
+
+    async createUniversity_manager(data: Partial<university_manager>){
+        const un_manager = this.unRepository.create(data);
+        const created = await this.unRepository.save(un_manager);
+
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        // Щоб отримати повні дані про факультет для DTO
+        const reloaded = await this.unRepository.findOne({
+            where: { id: created.id },
+            relations: this.relations
+        });
+
+        if (!reloaded) throw new CustomError(500, 'General', 'Error reloading created manager');
+
+        return new un_managerDto(reloaded);
+    }
+
+    async updateUniversity_manager(id: number, data: Partial<university_manager>) {
+        if (isNaN(id)) {
+            throw new CustomError(400, 'Validation', 'invalid ID manager');
         }
+        
+        const manager = await this.unRepository.findOne({ where: { id } });
+        if (!manager) {
+            throw new CustomError(404, 'General', 'manager not found ');
+        }
+        
+        Object.assign(manager, data);
+        await this.unRepository.save(manager);
+
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        const reloaded = await this.unRepository.findOne({
+            where: { id },
+            relations: this.relations
+        });
+
+        if (!reloaded) throw new CustomError(500, 'General', 'Error reloading updated manager');
+
+        return new un_managerDto(reloaded);
+    }
+        
+    async deleteUniversity_manager(id: number) {
+        if (isNaN(id)) {
+            throw new CustomError(400, 'Validation', 'invalid ID manager');
+        }
+        
+        const result = await this.unRepository.delete(id);
+        if (!result.affected) {
+            throw new CustomError(404, 'General', 'manager not found');
+        }
+        
+        return { message: `manager with ID ${id} correctly deleted` };
+    }
 }

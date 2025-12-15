@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', managerController.getAll);
 router.post('/',[validatorCreateManager_pp], managerController.create);
-router.put('/:id', managerController.update);
+router.patch('/:id', managerController.update);
 router.get('/:id', managerController.getById);
 router.delete('/:id', managerController.delete);
 

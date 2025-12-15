@@ -8,7 +8,7 @@ const router = Router();
 router.post('/',[validatorCreateTask] ,ratingController.create);
 router.get('/', ratingController.getAll);
 router.get('/:id', ratingController.getById);
-router.put('/:id', ratingController.update);
+router.patch('/:id', ratingController.update);
 router.delete('/:id', ratingController.delete);
 
 

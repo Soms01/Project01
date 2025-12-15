@@ -7,7 +7,7 @@ const router = Router();
 router.post('/',[validatorCreatePlace] ,placeController.create);
 router.get('/', placeController.getAll);
 router.get('/:id', placeController.getById);
-router.put('/:id', placeController.update);
+router.patch('/:id', placeController.update);
 router.delete('/:id', placeController.delete);
 
 
