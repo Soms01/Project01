@@ -1,8 +1,8 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { placeservices } from '../services/manager_placeservices';
+import { PlaceManagerServices } from '../services/manager_placeservices';
 
-const managerService = new placeservices
+const managerService = new PlaceManagerServices
 
 export class managerController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
