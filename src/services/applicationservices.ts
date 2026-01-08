@@ -1,21 +1,25 @@
 import { getRepository } from 'typeorm';
-import { application } from '../orm/entities/Aplication'; // Перевір, чи файл називається Aplication чи Application
+import { application } from '../orm/entities/Aplication';
 import { applicationDto } from '../DTO/applicationDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
 export class applicationservices {
   private appRepository = getRepository(application);
 
-  // Виносимо список зв'язків у змінну, щоб не дублювати код
   private relations = [
-    'student', 
-    'practice_place', 
-    'practice_place_manager', 
-    'university_manager'
+    'student',           
+        'student.specialition',
+        'student.specialition.facultation',    
+        'practicePlace',          
+        'practicePlace.city',      
+        'universityManager',
+        'universityManager.facultation',      
+        'practicePlaceManager',
+        'practicePlaceManager.practicePlace',
+        'practicePlaceManager.practicePlace.city'    
   ];
 
   async getAllApplications() {
-    // ✅ Виправлено синтаксис relations
     const applications = await this.appRepository.find({
       relations: this.relations 
     });
@@ -26,7 +30,6 @@ export class applicationservices {
     if (isNaN(id)) {
       throw new CustomError(400, 'Validation', 'invalid ID application');
     }
-    // ✅ Виправлено синтаксис relations
     const app = await this.appRepository.findOne({ 
       where: { id },
       relations: this.relations 
@@ -43,15 +46,12 @@ export class applicationservices {
     const newApp = this.appRepository.create(data);
     const saved = await this.appRepository.save(newApp);
 
-    // 🔥 ВАЖЛИВО: Перезавантажуємо створену заявку разом зі зв'язками
     const reloaded = await this.appRepository.findOne({
       where: { id: saved.id },
       relations: this.relations
     });
 
-    if (!reloaded) {
-        throw new CustomError(500, 'General', 'Error reloading created application');
-    }
+    if (!reloaded) throw new CustomError(500, 'General', 'Error reloading created application');
 
     return new applicationDto(reloaded);
   }
@@ -69,15 +69,12 @@ export class applicationservices {
     Object.assign(app, data);
     await this.appRepository.save(app);
 
-    // 🔥 ВАЖЛИВО: Перезавантажуємо оновлену заявку разом зі зв'язками
     const reloaded = await this.appRepository.findOne({
       where: { id },
       relations: this.relations
     });
 
-    if (!reloaded) {
-        throw new CustomError(500, 'General', 'Error reloading updated application');
-    }
+    if (!reloaded) throw new CustomError(500, 'General', 'Error reloading updated application');
 
     return new applicationDto(reloaded);
   }

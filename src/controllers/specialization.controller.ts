@@ -1,8 +1,8 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { specservices } from '../services/specservices';
+import { SpecServices } from '../services/specservices';
 
-const specService = new specservices
+const specService = new SpecServices
 
 export class specialitionController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {

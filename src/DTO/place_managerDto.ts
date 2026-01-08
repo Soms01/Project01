@@ -8,7 +8,7 @@ export class place_managerDto{
 
     constructor(place_manager: practice_place_manager) {
         this.Id = place_manager.id;
-        this.Fullname = place_manager.fullName;
+        this.Fullname = place_manager.fullname;
         this.placeid = place_manager.practicePlaceId ? new placeDto(place_manager.practicePlace) : null;
 
     }

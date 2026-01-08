@@ -3,17 +3,21 @@ import { practice_place_rating } from '../orm/entities/practice_place_rating';
 import { place_ratingDto } from '../DTO/place_ratingDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class RatingServices { // Бажано називати класи з великої літери
+export class RatingServices {
 
     private ratingRepository = getRepository(practice_place_rating);
 
-    // 👇 Список зв'язків. Перевір у entity 'practice_place_rating', 
-    // чи дійсно поля називаються 'student' та 'practice_place'
-    private relations = ['student', 'practice_place'];
+    private relations = [
+      'student',
+      'student.specialition',
+      'student.specialition.facultation',
+      'practicePlace',
+      'practicePlace.city'
+    ];
 
     async getAllRatings() {
         const ratings = await this.ratingRepository.find({
-            relations: this.relations // ✅ Додали relations
+            relations: this.relations 
         });
         return ratings.map((r) => new place_ratingDto(r));
     }
@@ -24,7 +28,7 @@ export class RatingServices { // Бажано називати класи з в�
         }
         const rating = await this.ratingRepository.findOne({ 
             where: { id },
-            relations: this.relations // ✅ Додали relations
+            relations: this.relations
         });
 
         if (!rating) {
@@ -38,8 +42,6 @@ export class RatingServices { // Бажано називати класи з в�
         const rating = this.ratingRepository.create(data);
         const created = await this.ratingRepository.save(rating);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
-        // TypeORM save() не повертає зв'язки. Треба дістати їх окремим запитом.
         const reloaded = await this.ratingRepository.findOne({
             where: { id: created.id },
             relations: this.relations
@@ -63,7 +65,7 @@ export class RatingServices { // Бажано називати класи з в�
         Object.assign(rating, data);
         await this.ratingRepository.save(rating);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        
         const reloaded = await this.ratingRepository.findOne({
             where: { id },
             relations: this.relations

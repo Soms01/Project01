@@ -3,18 +3,18 @@ import { place_managerDto } from '../DTO/place_managerDto';
 import { practice_place_manager } from '../orm/entities/practice_place_manager';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-// 🔥 ВИПРАВЛЕНО: Змінив назву класу, щоб не було конфлікту з placeservices
 export class PlaceManagerServices {
 
     private place_managerRepository = getRepository(practice_place_manager);
 
-    // 👇 Припускаю, що менеджер прив'язаний до місця практики. 
-    // Перевір у entity practice_place_manager, чи називається поле 'practice_place'
-    private relations = ['practice_place']; 
+    private relations = [
+        'practicePlace', 
+        'practicePlace.city' 
+    ]; 
 
     async getAllPlace_managers() {
         const ppmanagers = await this.place_managerRepository.find({
-            relations: this.relations // ✅ Додали зв'язки
+            relations: this.relations 
         });
         return ppmanagers.map((ppm) => new place_managerDto(ppm));
     }
@@ -25,7 +25,7 @@ export class PlaceManagerServices {
         }
         const place_manager = await this.place_managerRepository.findOne({ 
             where: { id },
-            relations: this.relations // ✅ Додали зв'язки
+            relations: this.relations 
         });
 
         if (!place_manager) {
@@ -39,7 +39,6 @@ export class PlaceManagerServices {
         const place_manager = this.place_managerRepository.create(data);
         const created = await this.place_managerRepository.save(place_manager);
         
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ (щоб DTO не впав, якщо там є звернення до practice_place)
         const reloaded = await this.place_managerRepository.findOne({
             where: { id: created.id },
             relations: this.relations
@@ -63,7 +62,6 @@ export class PlaceManagerServices {
         Object.assign(manager, data);
         await this.place_managerRepository.save(manager);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ
         const reloaded = await this.place_managerRepository.findOne({
             where: { id },
             relations: this.relations

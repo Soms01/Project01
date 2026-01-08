@@ -3,19 +3,15 @@ import { specialition } from '../orm/entities/specialization'; // Перевір
 import { specDto } from '../DTO/specDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-// Бажано SpecServices (PascalCase)
 export class SpecServices { 
     
     private specRepository = getRepository(specialition);
 
-    // 👇 Припускаю, що спеціальність прив'язана до факультету.
-    // Перевір у файлі entity/specialization.ts, як називається поле зв'язку:
-    // 'facultation' чи 'faculty'?
     private relations = ['facultation']; 
 
     async getAllSpecialitions() {
         const specialitions = await this.specRepository.find({
-            relations: this.relations // ✅ Додаємо зв'язки, якщо треба
+            relations: this.relations 
         });
         return specialitions.map((spec) => new specDto(spec));
     }
@@ -26,7 +22,7 @@ export class SpecServices {
         }
         const specialition = await this.specRepository.findOne({ 
             where: { id },
-            relations: this.relations // ✅ Додаємо зв'язки
+            relations: this.relations
         });
 
         if (!specialition) {
@@ -40,7 +36,6 @@ export class SpecServices {
         const specialition = this.specRepository.create(data);
         const created = await this.specRepository.save(specialition);
         
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ (важливо, якщо DTO використовує дані факультету)
         const reloaded = await this.specRepository.findOne({
             where: { id: created.id },
             relations: this.relations
@@ -64,7 +59,6 @@ export class SpecServices {
         Object.assign(specialition, data);
         await this.specRepository.save(specialition);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ
         const reloaded = await this.specRepository.findOne({
             where: { id },
             relations: this.relations

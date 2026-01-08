@@ -1,6 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-
-
 import { practice_place } from './practice_place';
 import { practice_place_manager } from './practice_place_manager';
 import { student } from './student';
@@ -22,7 +20,7 @@ export class application {
     type_practice: string;
     @Column({name:'practicePlaceId', type:'bigint'})
     practicePlaceId: number;
-    @Column({name:'studentid', type:'bigint'})
+    @Column({name:'studentId', type:'bigint'})
     studentId: number;
     @Column({name:'practicePlaceManagerId', type:'bigint'})
     practicePlaceManagerId: number;

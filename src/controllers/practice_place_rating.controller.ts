@@ -1,8 +1,8 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { ratingservices } from '../services/place_ratingservices';
+import { RatingServices } from '../services/place_ratingservices';
 
-const ratingService = new ratingservices
+const ratingService = new RatingServices
 
 export class ratingController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {

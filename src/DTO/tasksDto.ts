@@ -1,16 +1,21 @@
 import { task } from '../orm/entities/task';
-import { applicationDto } from './applicationDto';
 
-export class tasksDto{
-    Id: number;
-    Name: string;
+export class tasksDto {
+    id: number;   
+    name: string;      
     rating: number;
-    applicationId?: applicationDto | null;
+    
+    applicationId: number; 
 
-    constructor(tasks: task) {
-        this.Id = tasks.id;
-        this.Name = tasks.name;
-        this.applicationId = tasks.applicationId ? new applicationDto(tasks.application) : null;
+    constructor(taskEntity: task) {
+        this.id = Number(taskEntity.id);
+        this.name = taskEntity.name;
+        this.rating = taskEntity.rating !== undefined ? taskEntity.rating : 0; 
 
+        if (taskEntity.application) {
+            this.applicationId = Number(taskEntity.application.id);
+        } else {
+            this.applicationId = Number(taskEntity.applicationId);
+        }
     }
 }

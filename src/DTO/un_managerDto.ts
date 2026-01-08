@@ -8,7 +8,7 @@ export class un_managerDto{
 
     constructor(un_manager: university_manager) {
         this.Id = un_manager.id;
-        this.Fullname = un_manager.fullname;
+        this.Fullname = un_manager.fullName;
         this.facultation = un_manager.facultation ? new facultationDto(un_manager.facultation) : null;
     }
 }

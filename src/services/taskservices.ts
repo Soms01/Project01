@@ -3,18 +3,27 @@ import { task } from '../orm/entities/task';
 import { tasksDto } from '../DTO/tasksDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class TaskServices { // PascalCase для класів
+export class TaskServices {
 
     private taskRepository = getRepository(task);
 
-    // 👇 ВАЖЛИВО: Відкрий 'orm/entities/task.ts' і подивись, 
-    // з ким зв'язана таблиця tasks. Зазвичай це 'student' та 'practice_place_manager'.
-    // Впишіть сюди точні назви полів з декоратором @ManyToOne.
-    private relations = ['student', 'practice_place_manager']; 
+    private relations = [
+      'application',
+      'application.practicePlaceManager',
+      'application.practicePlaceManager.practicePlace',
+      'application.practicePlaceManager.practicePlace.city',
+      'application.universityManager',
+      'application.universityManager.facultation',
+      'application.practicePlace',
+      'application.practicePlace.city',
+      'application.student',
+      'application.student.specialition',
+      'application.student.specialition.facultation',
+    ]; 
 
     async getAllTasks() {
         const tasks = await this.taskRepository.find({
-            relations: this.relations // ✅ Завантажуємо зв'язки
+            relations: this.relations
         });
         return tasks.map((ts) => new tasksDto(ts));
     }
@@ -25,7 +34,7 @@ export class TaskServices { // PascalCase для класів
         }
         const task = await this.taskRepository.findOne({ 
             where: { id },
-            relations: this.relations // ✅ Завантажуємо зв'язки
+            relations: this.relations
         });
 
         if (!task) {
@@ -39,8 +48,6 @@ export class TaskServices { // PascalCase для класів
         const newTask = this.taskRepository.create(data);
         const created = await this.taskRepository.save(newTask);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
-        // Щоб DTO не впав при спробі прочитати created.student.name
         const reloaded = await this.taskRepository.findOne({
             where: { id: created.id },
             relations: this.relations
@@ -64,7 +71,6 @@ export class TaskServices { // PascalCase для класів
         Object.assign(existingTask, data);
         await this.taskRepository.save(existingTask);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
         const reloaded = await this.taskRepository.findOne({
             where: { id },
             relations: this.relations

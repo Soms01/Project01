@@ -3,19 +3,16 @@ import { un_managerDto } from '../DTO/un_managerDto';
 import { university_manager } from '../orm/entities/university_manager';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class un_managerservices { // Краще: UniversityManagerServices
+export class un_managerservices {
 
     private unRepository = getRepository(university_manager);
 
-    // 👇 ВАЖЛИВО: Перевір у файлі 'orm/entities/university_manager.ts'.
-    // Скоріш за все, менеджер прив'язаний до факультету.
-    // Якщо поле називається 'facultation', залишай як є. 
-    // Якщо 'faculty', зміни на 'faculty'.
+
     private relations = ['facultation']; 
 
     async getAllUniversity_managers() {
         const unmanagers = await this.unRepository.find({
-            relations: this.relations // ✅ Завантажуємо зв'язки
+            relations: this.relations 
         });
         return unmanagers.map((um) => new un_managerDto(um));
     }
@@ -26,7 +23,7 @@ export class un_managerservices { // Краще: UniversityManagerServices
         }
         const un_manager = await this.unRepository.findOne({ 
             where: { id },
-            relations: this.relations // ✅ Завантажуємо зв'язки
+            relations: this.relations 
         });
 
         if (!un_manager) {
@@ -36,12 +33,15 @@ export class un_managerservices { // Краще: UniversityManagerServices
         return new un_managerDto(un_manager);
     }
 
-    async createUniversity_manager(data: Partial<university_manager>){
-        const un_manager = this.unRepository.create(data);
+    async createUniversity_manager(data: any){
+
+        const un_manager = new university_manager();
+        un_manager.fullName = data.fullname || data.Fullname;
+    
+        un_manager.facultationId = Number(data.facultationId || data.facultation_id);
+
         const created = await this.unRepository.save(un_manager);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
-        // Щоб отримати повні дані про факультет для DTO
         const reloaded = await this.unRepository.findOne({
             where: { id: created.id },
             relations: this.relations
@@ -65,7 +65,6 @@ export class un_managerservices { // Краще: UniversityManagerServices
         Object.assign(manager, data);
         await this.unRepository.save(manager);
 
-        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
         const reloaded = await this.unRepository.findOne({
             where: { id },
             relations: this.relations

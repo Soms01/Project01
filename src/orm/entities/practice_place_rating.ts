@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 import { practice_place } from './practice_place';
 import { student } from './student';
@@ -13,8 +13,8 @@ export class practice_place_rating {
     practicePlaceId: number;
     @Column({name:'studentId', type:'bigint'})
     studentId: number;
-    @ManyToMany(() => practice_place, (pp) => pp.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @ManyToOne(() => practice_place, (pp) => pp.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
         practicePlace: practice_place;
-        @ManyToMany(() => student, (st) => st.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+        @ManyToOne(() => student, (st) => st.practiceplacerating, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
         student: student;
 }

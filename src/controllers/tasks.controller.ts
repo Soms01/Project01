@@ -1,8 +1,8 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { taskservices } from '../services/taskservices';
+import { TaskServices } from '../services/taskservices';
 
-const taskService = new taskservices
+const taskService = new TaskServices
 
 export class taskController {
   static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {

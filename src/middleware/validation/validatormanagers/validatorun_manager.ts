@@ -5,7 +5,7 @@ import { CustomError } from '../../../utils/response/custom-error/CustomError';
 
 export const validatorCreateManager_un = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { fullname, specialitionId } = req.body;
+    const { fullname, facultationId } = req.body;
 
     const errorsValidation: { [key: string]: string }[] = [];
     const fullnameStr =
@@ -13,8 +13,8 @@ export const validatorCreateManager_un = async (req: Request, res: Response, nex
     if (validator.isEmpty(fullnameStr)) {
       errorsValidation.push({fullname: "Поле 'ПІБ керівника' є обов’язковим",});
     }
-    if (!specialitionId || !validator.isInt(String(specialitionId), { min: 1 })) {
-      errorsValidation.push({ field: "specialitionId", message: 'Некоректний ID спеціалізації' });
+    if (!facultationId || !validator.isInt(String(facultationId), { min: 1 })) {
+      errorsValidation.push({ field: "facultationId", message: 'Некоректний ID факультету' });
     }
 
     if (errorsValidation.length > 0) {

@@ -10,7 +10,7 @@ export class university_manager {
     @PrimaryGeneratedColumn({ name: 'Id', type: 'bigint' })
   id: number;
   @Column({ name: 'Fullname', type:'varchar' })
-  fullname: string;
+  fullName: string;
   @Column({name:'facultationId', type:'bigint'})
     facultationId: number;
 
