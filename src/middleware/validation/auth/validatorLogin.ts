@@ -5,17 +5,13 @@ import { CustomError } from 'utils/response/custom-error/CustomError';
 import { ErrorValidation } from 'utils/response/custom-error/types';
 
 export const validatorLogin = (req: Request, res: Response, next: NextFunction) => {
-  let { email, password } = req.body;
+  let { username, password } = req.body;
   const errorsValidation: ErrorValidation[] = [];
 
-  email = !email ? '' : email;
+  username = !username ? '' : username;
   password = !password ? '' : password;
 
-  if (!validator.isEmail(email)) {
-    errorsValidation.push({ email: 'Email is invalid' });
-  }
-
-  if (validator.isEmpty(email)) {
+  if (validator.isEmpty(username)) {
     errorsValidation.push({ email: 'Email field is required' });
   }
 

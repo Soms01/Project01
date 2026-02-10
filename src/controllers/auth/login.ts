@@ -8,26 +8,23 @@ import { createJwtToken } from 'utils/createJwtToken';
 import { CustomError } from 'utils/response/custom-error/CustomError';
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   const userRepository = getRepository(User);
   try {
-    const user = await userRepository.findOne({ where: { email } });
+    const user = await userRepository.findOne({ where: { username } });
 
     if (!user) {
       const customError = new CustomError(404, 'General', 'Not Found', ['Incorrect email or password']);
       return next(customError);
     }
-
-    if (!user.checkIfPasswordMatch(password)) {
-      const customError = new CustomError(404, 'General', 'Not Found', ['Incorrect email or password']);
-      return next(customError);
-    }
-
+ 
     const jwtPayload: JwtPayload = {
       id: user.id,
+      username: user.username,
+      password: password,
       name: user.name,
-      email: user.email,
+      email: user.email,      
       role: user.role as Role,
       created_at: user.created_at,
     };

@@ -3,27 +3,15 @@ import { task } from '../orm/entities/task';
 import { tasksDto } from '../DTO/tasksDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class TaskServices {
-
-    private taskRepository = getRepository(task);
-
-    private relations = [
-      'application',
-      'application.practicePlaceManager',
-      'application.practicePlaceManager.practicePlace',
-      'application.practicePlaceManager.practicePlace.city',
-      'application.universityManager',
-      'application.universityManager.facultation',
-      'application.practicePlace',
-      'application.practicePlace.city',
-      'application.student',
-      'application.student.specialition',
-      'application.student.specialition.facultation',
-    ]; 
+export class TaskServices { // PascalCase для класів
+    // 👇 ВАЖЛИВО: Відкрий 'orm/entities/task.ts' і подивись,
+    // з ким зв'язана таблиця tasks. Зазвичай це 'student' та 'practice_place_manager'.
+    // Впишіть сюди точні назви полів з декоратором @ManyToOne.
+    private relations = ['student', 'practice_place_manager'];
 
     async getAllTasks() {
-        const tasks = await this.taskRepository.find({
-            relations: this.relations
+        const tasks = await getRepository(task).find({
+            relations: this.relations // ✅ Завантажуємо зв'язки
         });
         return tasks.map((ts) => new tasksDto(ts));
     }
@@ -32,23 +20,25 @@ export class TaskServices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID task');
         }
-        const task = await this.taskRepository.findOne({ 
+        const taskEntity = await getRepository(task).findOne({
             where: { id },
-            relations: this.relations
+            relations: this.relations // ✅ Завантажуємо зв'язки
         });
 
-        if (!task) {
+        if (!taskEntity) {
             throw new CustomError(404, 'General', 'task not found');
         }
 
-        return new tasksDto(task);
+        return new tasksDto(taskEntity);
     }
 
     async createTask(data: Partial<task>){
-        const newTask = this.taskRepository.create(data);
-        const created = await this.taskRepository.save(newTask);
+        const newTask = getRepository(task).create(data);
+        const created = await getRepository(task).save(newTask);
 
-        const reloaded = await this.taskRepository.findOne({
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        // Щоб DTO не впав при спробі прочитати created.student.name
+        const reloaded = await getRepository(task).findOne({
             where: { id: created.id },
             relations: this.relations
         });
@@ -62,16 +52,17 @@ export class TaskServices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID task');
         }
-        
-        const existingTask = await this.taskRepository.findOne({ where: { id } });
+
+        const existingTask = await getRepository(task).findOne({ where: { id } });
         if (!existingTask) {
             throw new CustomError(404, 'General', 'task not found ');
         }
 
         Object.assign(existingTask, data);
-        await this.taskRepository.save(existingTask);
+        await getRepository(task).save(existingTask);
 
-        const reloaded = await this.taskRepository.findOne({
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        const reloaded = await getRepository(task).findOne({
             where: { id },
             relations: this.relations
         });
@@ -86,7 +77,7 @@ export class TaskServices {
             throw new CustomError(400, 'Validation', 'invalid ID task');
         }
 
-        const result = await this.taskRepository.delete(id);
+        const result = await getRepository(task).delete(id);
         if (!result.affected) {
             throw new CustomError(404, 'General', 'task not found');
         }

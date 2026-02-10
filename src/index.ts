@@ -37,9 +37,6 @@ const port = process.env.PORT || 4000;
 
 (async () => {
   try {
-    await dbCreateConnection();
-    console.log('📦 Database connection established');
-
     const routes = (await import('./routes')).default;
     app.use('/', routes);
     app.use(errorHandler);

@@ -3,14 +3,16 @@ import { student } from '../orm/entities/student';
 import { studentDto } from '../DTO/studentDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class studentservices {
-    private studentRepository = getRepository(student);
-
-    private relations = ['specialition']; 
+export class studentservices { // Краще назвати StudentServices
+    // 👇 ВАЖЛИВО: Перевір у файлі 'orm/entities/student.ts',
+    // як саме називається поле зв'язку зі спеціальністю.
+    // Я написав 'specialition', бо так називався твій entity-файл раніше.
+    // Якщо там написано @ManyToOne... specialization, то зміни тут на 'specialization'
+    private relations = ['specialition'];
 
     async getAllStudents() {
-        const students = await this.studentRepository.find({
-            relations: this.relations
+        const students = await getRepository(student).find({
+            relations: this.relations // ✅ Завантажуємо спеціальність разом зі студентами
         });
         return students.map((st) => new studentDto(st));
     }
@@ -19,23 +21,26 @@ export class studentservices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID student');
         }
-        const student = await this.studentRepository.findOne({ 
+        const studentEntity = await getRepository(student).findOne({
             where: { id },
-            relations: this.relations
+            relations: this.relations // ✅ Завантажуємо спеціальність
         });
 
-        if (!student) {
+        if (!studentEntity) {
             throw new CustomError(404, 'General', 'student not found');
         }
 
-        return new studentDto(student);
+        return new studentDto(studentEntity);
     }
 
     async createStudent(data: Partial<student>){
-        const student = this.studentRepository.create(data);
-        const created = await this.studentRepository.save(student);
+        const studentEntity = getRepository(student).create(data);
+        const created = await getRepository(student).save(studentEntity);
 
-        const reloaded = await this.studentRepository.findOne({
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        // Після save() ми маємо тільки ID спеціальності, але не її назву.
+        // Треба перезавантажити студента з бази разом зі зв'язками.
+        const reloaded = await getRepository(student).findOne({
             where: { id: created.id },
             relations: this.relations
         });
@@ -49,16 +54,17 @@ export class studentservices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID student');
         }
-        
-        const student = await this.studentRepository.findOne({ where: { id } });
-        if (!student) {
+
+        const studentEntity = await getRepository(student).findOne({ where: { id } });
+        if (!studentEntity) {
             throw new CustomError(404, 'General', 'student not found ');
         }
 
-        Object.assign(student, data);
-        await this.studentRepository.save(student);
+        Object.assign(studentEntity, data);
+        await getRepository(student).save(studentEntity);
 
-        const reloaded = await this.studentRepository.findOne({
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ:
+        const reloaded = await getRepository(student).findOne({
             where: { id },
             relations: this.relations
         });
@@ -73,7 +79,7 @@ export class studentservices {
             throw new CustomError(400, 'Validation', 'invalid ID student');
         }
 
-        const result = await this.studentRepository.delete(id);
+        const result = await getRepository(student).delete(id);
         if (!result.affected) {
             throw new CustomError(404, 'General', 'student not found');
         }

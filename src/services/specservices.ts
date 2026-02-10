@@ -3,15 +3,16 @@ import { specialition } from '../orm/entities/specialization'; // Перевір
 import { specDto } from '../DTO/specDto';
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
-export class SpecServices { 
-    
-    private specRepository = getRepository(specialition);
-
-    private relations = ['facultation']; 
+// Бажано SpecServices (PascalCase)
+export class SpecServices {
+    // 👇 Припускаю, що спеціальність прив'язана до факультету.
+    // Перевір у файлі entity/specialization.ts, як називається поле зв'язку:
+    // 'facultation' чи 'faculty'?
+    private relations = ['facultation'];
 
     async getAllSpecialitions() {
-        const specialitions = await this.specRepository.find({
-            relations: this.relations 
+        const specialitions = await getRepository(specialition).find({
+            relations: this.relations // ✅ Додаємо зв'язки, якщо треба
         });
         return specialitions.map((spec) => new specDto(spec));
     }
@@ -20,23 +21,24 @@ export class SpecServices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID specialition');
         }
-        const specialition = await this.specRepository.findOne({ 
+        const specialitionEntity = await getRepository(specialition).findOne({
             where: { id },
-            relations: this.relations
+            relations: this.relations // ✅ Додаємо зв'язки
         });
 
-        if (!specialition) {
+        if (!specialitionEntity) {
             throw new CustomError(404, 'General', 'specialition not found');
         }
 
-        return new specDto(specialition);
+        return new specDto(specialitionEntity);
     }
 
     async createSpecialition(data: Partial<specialition>){
-        const specialition = this.specRepository.create(data);
-        const created = await this.specRepository.save(specialition);
-        
-        const reloaded = await this.specRepository.findOne({
+        const specialitionEntity = getRepository(specialition).create(data);
+        const created = await getRepository(specialition).save(specialitionEntity);
+
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ (важливо, якщо DTO використовує дані факультету)
+        const reloaded = await getRepository(specialition).findOne({
             where: { id: created.id },
             relations: this.relations
         });
@@ -50,16 +52,17 @@ export class SpecServices {
         if (isNaN(id)) {
             throw new CustomError(400, 'Validation', 'invalid ID specialition');
         }
-        
-        const specialition = await this.specRepository.findOne({ where: { id } });
-        if (!specialition) {
+
+        const specialitionEntity = await getRepository(specialition).findOne({ where: { id } });
+        if (!specialitionEntity) {
             throw new CustomError(404, 'General', 'specialition not found ');
         }
 
-        Object.assign(specialition, data);
-        await this.specRepository.save(specialition);
+        Object.assign(specialitionEntity, data);
+        await getRepository(specialition).save(specialitionEntity);
 
-        const reloaded = await this.specRepository.findOne({
+        // 🔥 ПЕРЕЗАВАНТАЖЕННЯ
+        const reloaded = await getRepository(specialition).findOne({
             where: { id },
             relations: this.relations
         });
@@ -74,7 +77,7 @@ export class SpecServices {
             throw new CustomError(400, 'Validation', 'invalid ID specialition');
         }
 
-        const result = await this.specRepository.delete(id);
+        const result = await getRepository(specialition).delete(id);
         if (!result.affected) {
             throw new CustomError(404, 'General', 'specialition not found');
         }

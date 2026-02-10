@@ -13,9 +13,6 @@ export class User {
   })
   email: string;
 
-  @Column()
-  password: string;
-
   @Column({
     nullable: true,
     unique: true,
@@ -51,11 +48,4 @@ export class User {
     this.language = language;
   }
 
-  hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 8);
-  }
-
-  checkIfPasswordMatch(unencryptedPassword: string) {
-    return bcrypt.compareSync(unencryptedPassword, this.password);
-  }
 }

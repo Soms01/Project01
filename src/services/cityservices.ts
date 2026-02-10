@@ -4,10 +4,8 @@ import { cityDto } from '../DTO/cityDto'
 import { CustomError } from '../utils/response/custom-error/CustomError';
 
 export class cityservices {
-    private cityRepository = getRepository(city);
-
     async getAllCities() {
-    const cities = await this.cityRepository.find();
+    const cities = await getRepository(city).find();
     return cities.map((c) => new cityDto(c));
     }
 
@@ -15,17 +13,17 @@ export class cityservices {
     if (isNaN(id)) {
       throw new CustomError(400, 'Validation', 'invalid ID city');
     }
-    const city = await this.cityRepository.findOne({ where: { id } });
-    if (!city) {
+    const cityEntity = await getRepository(city).findOne({ where: { id } });
+    if (!cityEntity) {
       throw new CustomError(404, 'General', 'city not found');
     }
 
-    return new cityDto(city);
+    return new cityDto(cityEntity);
     }
 
     async createCity(data: Partial<city>){
-        const city = this.cityRepository.create(data);
-        const created = await this.cityRepository.save(city);
+        const cityEntity = getRepository(city).create(data);
+        const created = await getRepository(city).save(cityEntity);
         return new cityDto(created);
 
     }
@@ -34,13 +32,13 @@ export class cityservices {
     if (isNaN(id)) {
       throw new CustomError(400, 'Validation', 'invalid ID city');
     }
-    const city = await this.cityRepository.findOne({ where: { id } });
-    if (!city) {
+    const cityEntity = await getRepository(city).findOne({ where: { id } });
+    if (!cityEntity) {
       throw new CustomError(404, 'General', 'city not found ');
     }
 
-    Object.assign(city, data);
-    const updated = await this.cityRepository.save(city);
+    Object.assign(cityEntity, data);
+    const updated = await getRepository(city).save(cityEntity);
     return new cityDto(updated);
   }
 
@@ -49,7 +47,7 @@ export class cityservices {
       throw new CustomError(400, 'Validation', 'invalid ID city');
     }
 
-    const result = await this.cityRepository.delete(id);
+    const result = await getRepository(city).delete(id);
     if (!result.affected) {
       throw new CustomError(404, 'General', 'city not found');
     }
